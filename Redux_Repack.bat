@@ -3,6 +3,7 @@
 ECHO This program will repack the Daughters of Ares files for you.
 ECHO.
 ECHO Optionally, you can compress these files to save space.
+:Compress
 ECHO Would you like to compress the files? (Y/N)
 SET /P CHOICE=
 
@@ -16,10 +17,11 @@ IF %CHOICE%==Y (
 	SET COMPRESS=0
 ) ELSE (
 	ECHO "%CHOICE%" is not a valid choice.
-	GOTO Err0
+	GOTO Compress
 )
 
 ECHO.
+:TaleTW
 ECHO Are you using Tale of Two Wastelands? (Y/N)
 SET /P CHOICE=
 
@@ -33,13 +35,14 @@ IF %CHOICE%==Y (
 	SET TTW=0
 ) ELSE (
 	ECHO "%CHOICE%" is not a valid choice.
-	GOTO Err0
+	GOTO TaleTW
 )
 
 SET LOCALDIR=%~dp0
 SET SRCDIR=%TEMP%\DoASource
 SET DSTDIR=%TEMP%\DoAREDUX
 SET DLTDIR=%TEMP%\Delta
+SET DLTZIP=%TEMP%\Delta.zip
 
 IF NOT EXIST "%LOCALDIR%xdelta3.exe" (GOTO Err1)
 IF NOT EXIST "%LOCALDIR%BSArch.exe" (GOTO Err2)
@@ -48,7 +51,7 @@ IF NOT EXIST "%SRCDIR%" MKDIR %SRCDIR%
 IF NOT EXIST "%DSTDIR%" MKDIR %DSTDIR%
 IF NOT EXIST "%DLTDIR%" MKDIR %DLTDIR%
 
-CERTUTIL -decode "%~f0" %TEMP%\Delta.zip
+CERTUTIL -decode "%~f0" %DLTZIP%
 
 set vbs="%temp%\_.vbs"
 if exist %vbs% del /f /q %vbs%
@@ -57,7 +60,7 @@ if exist %vbs% del /f /q %vbs%
 >>%vbs% echo fso.CreateFolder("%DLTDIR%")
 >>%vbs% echo End If
 >>%vbs% echo set objShell = CreateObject("Shell.Application")
->>%vbs% echo set FilesInZip=objShell.NameSpace("%TEMP%\Delta.zip").items
+>>%vbs% echo set FilesInZip=objShell.NameSpace("%DLTZIP%").items
 >>%vbs% echo objShell.NameSpace("%DLTDIR%").CopyHere(FilesInZip)
 >>%vbs% echo Set fso = Nothing
 >>%vbs% echo Set objShell = Nothing
@@ -213,10 +216,10 @@ xdelta3.exe -d -s "%DSTDIR%\meshes\doa\armor\vaultsuitutility\f\vaultsuitutility
 xdelta3.exe -d -s "%DSTDIR%\meshes\doa\armor\wastelanddoctor01\outfitf.nif" "%DLTDIR%\wastelanddoctor02f.xd3" "%DSTDIR%\meshes\doa\armor\wastelanddoctor01\wastelanddoctor02f\outfitf.nif"
 
 IF %TTW%==1 (
-	XCOPY "%SRCDIR%\Meshes\armor\1950stylecasual02\doa.nif*" "%DSTDIR%\Meshes\doa\armor\1950stylecasual02dc\outfitf.nif*"
-	MKDIR "%DSTDIR%\meshes\doa\armor\1950stylecasual02\1950scasual2variantfdc"
-	xdelta3.exe -d -s "%DSTDIR%\meshes\doa\armor\1950stylecasual01\f\outfitf.nif" "%DLTDIR%\1950stylecasual02dc.xd3" "%DSTDIR%\meshes\doa\armor\1950stylecasual02dc\outfitf.nif"
-	xdelta3.exe -d -s "%DSTDIR%\meshes\doa\armor\1950stylecasual01\f\outfitf.nif" "%DLTDIR%\1950scasual2variantfdc.xd3" "%DSTDIR%\meshes\doa\armor\1950stylecasual02dc\1950scasual2variantfdc\outfitf.nif"
+	MKDIR "%DSTDIR%\meshes\doa\armor\1950stylecasual02dc"
+	MKDIR "%DSTDIR%\meshes\doa\armor\1950stylecasual02dc\1950scasual2variantfdc"
+	xdelta3.exe -d -s "%SRCDIR%\meshes\armor\1950stylecasual02\doa.nif" "%DLTDIR%\1950stylecasual02dc.xd3" "%DSTDIR%\meshes\doa\armor\1950stylecasual02dc\outfitf.nif"
+	xdelta3.exe -d -s "%SRCDIR%\meshes\armor\1950stylecasual02\doa.nif" "%DLTDIR%\1950scasual2variantfdc.xd3" "%DSTDIR%\meshes\doa\armor\1950stylecasual02dc\1950scasual2variantfdc\outfitf.nif"
 )
 
 xdelta3.exe -d -s "%SRCDIR%\meshes\characters\_male\daughtersofares\eye\eyelefthumanfemale.nif" "%DLTDIR%\eyelefthumanfemale.xd3" "%DSTDIR%\meshes\characters\_male\daughtersofares\eye\eyelefthumanfemale.nif"
@@ -242,12 +245,8 @@ IF %COMPRESS%==1 (
 @RD /S /Q %SRCDIR%
 @RD /S /Q %DSTDIR%
 @RD /S /Q %DLTDIR%
-DEL %TEMP%\Delta.zip
+DEL %DLTZIP%
 GOTO End
-
-:Err0
-PAUSE
-EXIT
 
 :Err1
 ECHO 'xdelta3.exe' is missing!
