@@ -1,5 +1,21 @@
 @ECHO OFF
 
+:CheckFiles
+
+IF NOT EXIST "%~dp0xdelta3.exe" (SET MISFILE=xdelta3.exe& GOTO Err)
+IF NOT EXIST "%~dp0BSArch.exe" (SET MISFILE=BSArch.exe& GOTO Err)
+IF NOT EXIST "%~dp0Daughters of Ares.bsa" (SET MISFILE=Daughters of Ares.bsa& GOTO Err)
+
+GOTO Start
+
+:Err
+ECHO '%MISFILE%' is missing!
+ECHO Aquire %MISFILE%, then try again.
+PAUSE
+GOTO CheckFiles
+
+:Start
+
 ECHO This program will repack the Daughters of Ares files for you.
 ECHO.
 ECHO Optionally, you can compress these files to save space.
@@ -38,120 +54,139 @@ IF %CHOICE%==Y (
 	GOTO TaleTW
 )
 
-SET LOCALDIR=%~dp0
+SETLOCAL EnableDelayedExpansion
+
+FOR /F %%a in ('COPY /Z "%~dpf0" NUL') DO SET "CR=%%a"
+FOR /F %%a in ('"PROMPT $H&FOR %%b IN (0) DO REM"') DO SET "BS=%%a"
+
 SET SRCDIR=%TEMP%\DoASource
 SET DSTDIR=%TEMP%\DoAREDUX
 SET DLTDIR=%TEMP%\Delta
 SET DLTZIP=%TEMP%\Delta.zip
 
-IF NOT EXIST "%LOCALDIR%xdelta3.exe" (GOTO Err1)
-IF NOT EXIST "%LOCALDIR%BSArch.exe" (GOTO Err2)
-IF NOT EXIST "%LOCALDIR%Daughters of Ares.bsa" (GOTO Err3)
 IF NOT EXIST "%SRCDIR%" MKDIR %SRCDIR%
 IF NOT EXIST "%DSTDIR%" MKDIR %DSTDIR%
 IF NOT EXIST "%DLTDIR%" MKDIR %DLTDIR%
 
-CERTUTIL -decode "%~f0" %DLTZIP%
+CLS
 
-set vbs="%temp%\_.vbs"
-if exist %vbs% del /f /q %vbs%
->%vbs%  echo Set fso = CreateObject("Scripting.FileSystemObject")
->>%vbs% echo If NOT fso.FolderExists("%DLTDIR%") Then
->>%vbs% echo fso.CreateFolder("%DLTDIR%")
->>%vbs% echo End If
->>%vbs% echo set objShell = CreateObject("Shell.Application")
->>%vbs% echo set FilesInZip=objShell.NameSpace("%DLTZIP%").items
->>%vbs% echo objShell.NameSpace("%DLTDIR%").CopyHere(FilesInZip)
->>%vbs% echo Set fso = Nothing
->>%vbs% echo Set objShell = Nothing
-cscript //nologo %vbs%
-if exist %vbs% del /f /q %vbs%
+ECHO Please wait while the files are rebuilt.
 
-BSArch.exe unpack "%LOCALDIR%Daughters of Ares.bsa" "%SRCDIR%\" -mt -q
+ECHO.
 
-XCOPY "%SRCDIR%\Meshes\Characters\" "%DSTDIR%\Meshes\Characters\" /E
-XCOPY "%SRCDIR%\Textures\" "%DSTDIR%\Textures\" /E
+<nul set /p"=        [          ]"
 
-XCOPY "%SRCDIR%\Meshes\armor\1950stylecasual01\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\1950stylecasual01\f\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\1950stylecasual02\doa.nif*" "%DSTDIR%\Meshes\doa\armor\1950stylecasual02\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\1950stylesuit\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\1950stylesuit\f\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\caesar\doa.nif*" "%DSTDIR%\Meshes\doa\armor\caesar\caesar_f.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\cass\doa.nif*" "%DSTDIR%\Meshes\doa\armor\cass\cass_companion.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\centurion\doa.nif*" "%DSTDIR%\Meshes\doa\armor\centurion\centurion_f.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\combatarmor\f\outfitf.doa.nif*" "%DSTDIR%\Meshes\doa\armor\combatarmor\f\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\doctorli\f\outfitf.doa.nif*" "%DSTDIR%\Meshes\doa\armor\doctorli\f\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\greatkhans\v1.nif*" "%DSTDIR%\Meshes\doa\armor\greatkhans\greatkhan_v1.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\greatkhans\v2.nif*" "%DSTDIR%\Meshes\doa\armor\greatkhans\greatkhan_v2.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\greatkhans\v3.nif*" "%DSTDIR%\Meshes\doa\armor\greatkhans\greatkhan_v3.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\greatkhans\v4.nif*" "%DSTDIR%\Meshes\doa\armor\greatkhans\greatkhan_v4.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\leatherarmor\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\leatherarmor\f\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\leatherarmor\f\doa ref.nif*" "%DSTDIR%\Meshes\doa\armor\leatherarmor\f\mark2leather_f.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\legion\doa.explorer.nif*" "%DSTDIR%\Meshes\doa\armor\legion\legionexplorer_f.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\legion\doa.pretorian.nif*" "%DSTDIR%\Meshes\doa\armor\legion\legionpretorian_f.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\legion\doa.prime.nif*" "%DSTDIR%\Meshes\doa\armor\legion\legionprime_f.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\legion\doa.recruit.nif*" "%DSTDIR%\Meshes\doa\armor\legion\legionrecruit_f.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\legion\doa.veteran.nif*" "%DSTDIR%\Meshes\doa\armor\legion\legionveteran_f.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\legion\doa.vexillarius.nif*" "%DSTDIR%\Meshes\doa\armor\legion\legionvexillarius_f.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\lingerie\doa.nif*" "%DSTDIR%\Meshes\doa\armor\lingerie\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\lucassimms\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\lucassimms\f\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\ncr_gambler\01.nif*" "%DSTDIR%\Meshes\doa\armor\ncr_gambler\ncr_gambler_f01.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\ncr_gambler\02.nif*" "%DSTDIR%\Meshes\doa\armor\ncr_gambler\ncr_gambler_f02.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\ncr_gambler\03.nif*" "%DSTDIR%\Meshes\doa\armor\ncr_gambler\ncr_gambler_f03.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\ncr_gambler\04.nif*" "%DSTDIR%\Meshes\doa\armor\ncr_gambler\ncr_gambler_f04.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\ncr_gambler\doa.nif*" "%DSTDIR%\Meshes\doa\armor\ncr_gambler\ncr_ambassador_fdoa.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\prostitutes\01.nif*" "%DSTDIR%\Meshes\doa\armor\prostitutes\prosfemale01.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\prostitutes\02.nif*" "%DSTDIR%\Meshes\doa\armor\prostitutes\prosfemale02.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\prostitutes\03.nif*" "%DSTDIR%\Meshes\doa\armor\prostitutes\prosfemale03.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\raiderarmor01\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\raiderarmor01\f\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\raiderarmor02\doa.nif*" "%DSTDIR%\Meshes\doa\armor\raiderarmor02\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\raiderarmor03\doa.nif*" "%DSTDIR%\Meshes\doa\armor\raiderarmor03\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\raiderarmor04\doa.nif*" "%DSTDIR%\Meshes\doa\armor\raiderarmor04\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\raiderarmor04\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlcpre2\Armor\PreordArmorTribalRaiding\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\republicans\01.nif*" "%DSTDIR%\Meshes\doa\armor\republicans\republicanf_01.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\republicans\02.nif*" "%DSTDIR%\Meshes\doa\armor\republicans\republicanf_02.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\republicans\03.nif*" "%DSTDIR%\Meshes\doa\armor\republicans\republicanf_03.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\republicans\04.nif*" "%DSTDIR%\Meshes\doa\armor\republicans\republicanf_04.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\robcojumpsuit\doa.nif*" "%DSTDIR%\Meshes\doa\armor\robcojumpsuit\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\slaverags\01.nif*" "%DSTDIR%\Meshes\doa\armor\slaverags\slaverags_f1.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\slaverags\02.nif*" "%DSTDIR%\Meshes\doa\armor\slaverags\slaverags_f2.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\tuxedo\doa.nif*" "%DSTDIR%\Meshes\doa\armor\tuxedo\tuxedo_f.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\vaultsuitutility\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\vaultsuitutility\f\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\vaultsuitutility\f\doadad.nif*" "%DSTDIR%\Meshes\doa\armor\vaultsuitutility\f\vaultsuitutilitydadf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing01\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandclothing01\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing02\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandclothing02\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing03\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandclothing03\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing04\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandclothing04\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing05\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandclothing05\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing06\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandclothing06\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\wastelanddoctor01\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelanddoctor01\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\wastelandsettler01\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandsettler01\f\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\armor\wastelandsettler02\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandsettler02\f\outfitf.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc01\armor\starlet\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlc01\armor\starlet\nvdlc01starletdress.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\daniel\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\daniel\nvdlc01danieloutfit_f.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\deadhorse\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\deadhorse\nvdlc02deadhorsestalkingf.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\jgraham\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\jgraham\jgraham_outfit_f.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\sorrows\01.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\sorrows\nvdlc02sorrowsoutfit01_f.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\sorrows\02.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\sorrows\nvdlc02sorrowsoutfit02_f.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\sorrows\03.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\sorrows\nvdlc02wakingcloud_f.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\whitelegs\01.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\whitelegs\whitelegs_vf01.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\whitelegs\02.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\whitelegs\whitelegs_vf02.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc03\armor\nvdlc03patientgown\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlc03\armor\nvdlc03patientgown\nvdlc03patientgown_f.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc04\armor\markedmen\doa legate.nif*" "%DSTDIR%\Meshes\doa\nvdlc04\armor\markedmen\markedmen_legate_f.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc04\armor\markedmen\doa lg.nif*" "%DSTDIR%\Meshes\doa\nvdlc04\armor\markedmen\markedmen_lg_f.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc04\armor\markedmen\doa ncr.nif*" "%DSTDIR%\Meshes\doa\nvdlc04\armor\markedmen\markedmen_ncr_f.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc04\armor\markedmen\doa ranger.nif*" "%DSTDIR%\Meshes\doa\nvdlc04\armor\markedmen\markedmen_ranger_f.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc04\armor\ulysses\doa 21.nif*" "%DSTDIR%\Meshes\doa\nvdlc04\armor\ulysses\ulysses_21_f.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc04\armor\ulysses\doa cl.nif*" "%DSTDIR%\Meshes\doa\nvdlc04\armor\ulysses\ulysses_cl_f.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc04\armor\ulysses\doa ncr.nif*" "%DSTDIR%\Meshes\doa\nvdlc04\armor\ulysses\ulysses_ncr_f.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlc04\armor\ulysses\doa oldworld.nif*" "%DSTDIR%\Meshes\doa\nvdlc04\armor\ulysses\ulysses_oldworld_f.nif*"
-XCOPY "%SRCDIR%\Meshes\nvdlcpre3\armor\preordleather\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlcpre3\armor\preordleather\preordleatherarmorf.nif*"
+CERTUTIL -decode "%~f0" %DLTZIP% >nul
+
+<nul set /p"=!BS!!CR![=         ]"
+
+SET VBS="%TEMP%\Delta.vbs"
+IF EXIST %VBS% DEL /F /Q %VBS%
+>%VBS%  ECHO Set fso = CreateObject("Scripting.FileSystemObject")
+>>%VBS% ECHO If NOT fso.FolderExists("%DLTDIR%") Then
+>>%VBS% ECHO fso.CreateFolder("%DLTDIR%")
+>>%VBS% ECHO End If
+>>%VBS% ECHO Set objShell = CreateObject("Shell.Application")
+>>%VBS% ECHO Set FilesInZip=objShell.NameSpace("%DLTZIP%").Items
+>>%VBS% ECHO objShell.NameSpace("%DLTDIR%").CopyHere(FilesInZip)
+>>%VBS% ECHO Set fso = Nothing
+>>%VBS% ECHO Set objShell = Nothing
+CSCRIPT /nologo %VBS%
+IF EXIST %VBS% DEL /F /Q %VBS%
+
+<nul set /p"=!BS!!CR![==        ]"
+
+BSArch.exe unpack "%~dp0Daughters of Ares.bsa" "%SRCDIR%\" -mt -q >nul
+
+<nul set /p"=!BS!!CR![===       ]"
+
+XCOPY "%SRCDIR%\Meshes\Characters\" "%DSTDIR%\Meshes\Characters\" /E >nul
+XCOPY "%SRCDIR%\Textures\" "%DSTDIR%\Textures\" /E >nul
+
+<nul set /p"=!BS!!CR![====      ]"
+
+XCOPY "%SRCDIR%\Meshes\armor\1950stylecasual01\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\1950stylecasual01\f\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\1950stylecasual02\doa.nif*" "%DSTDIR%\Meshes\doa\armor\1950stylecasual02\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\1950stylesuit\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\1950stylesuit\f\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\caesar\doa.nif*" "%DSTDIR%\Meshes\doa\armor\caesar\caesar_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\cass\doa.nif*" "%DSTDIR%\Meshes\doa\armor\cass\cass_companion.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\centurion\doa.nif*" "%DSTDIR%\Meshes\doa\armor\centurion\centurion_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\combatarmor\f\outfitf.doa.nif*" "%DSTDIR%\Meshes\doa\armor\combatarmor\f\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\doctorli\f\outfitf.doa.nif*" "%DSTDIR%\Meshes\doa\armor\doctorli\f\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\greatkhans\v1.nif*" "%DSTDIR%\Meshes\doa\armor\greatkhans\greatkhan_v1.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\greatkhans\v2.nif*" "%DSTDIR%\Meshes\doa\armor\greatkhans\greatkhan_v2.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\greatkhans\v3.nif*" "%DSTDIR%\Meshes\doa\armor\greatkhans\greatkhan_v3.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\greatkhans\v4.nif*" "%DSTDIR%\Meshes\doa\armor\greatkhans\greatkhan_v4.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\leatherarmor\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\leatherarmor\f\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\leatherarmor\f\doa ref.nif*" "%DSTDIR%\Meshes\doa\armor\leatherarmor\f\mark2leather_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\legion\doa.explorer.nif*" "%DSTDIR%\Meshes\doa\armor\legion\legionexplorer_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\legion\doa.pretorian.nif*" "%DSTDIR%\Meshes\doa\armor\legion\legionpretorian_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\legion\doa.prime.nif*" "%DSTDIR%\Meshes\doa\armor\legion\legionprime_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\legion\doa.recruit.nif*" "%DSTDIR%\Meshes\doa\armor\legion\legionrecruit_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\legion\doa.veteran.nif*" "%DSTDIR%\Meshes\doa\armor\legion\legionveteran_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\legion\doa.vexillarius.nif*" "%DSTDIR%\Meshes\doa\armor\legion\legionvexillarius_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\lingerie\doa.nif*" "%DSTDIR%\Meshes\doa\armor\lingerie\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\lucassimms\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\lucassimms\f\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\ncr_gambler\01.nif*" "%DSTDIR%\Meshes\doa\armor\ncr_gambler\ncr_gambler_f01.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\ncr_gambler\02.nif*" "%DSTDIR%\Meshes\doa\armor\ncr_gambler\ncr_gambler_f02.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\ncr_gambler\03.nif*" "%DSTDIR%\Meshes\doa\armor\ncr_gambler\ncr_gambler_f03.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\ncr_gambler\04.nif*" "%DSTDIR%\Meshes\doa\armor\ncr_gambler\ncr_gambler_f04.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\ncr_gambler\doa.nif*" "%DSTDIR%\Meshes\doa\armor\ncr_gambler\ncr_ambassador_fdoa.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\prostitutes\01.nif*" "%DSTDIR%\Meshes\doa\armor\prostitutes\prosfemale01.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\prostitutes\02.nif*" "%DSTDIR%\Meshes\doa\armor\prostitutes\prosfemale02.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\prostitutes\03.nif*" "%DSTDIR%\Meshes\doa\armor\prostitutes\prosfemale03.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\raiderarmor01\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\raiderarmor01\f\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\raiderarmor02\doa.nif*" "%DSTDIR%\Meshes\doa\armor\raiderarmor02\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\raiderarmor03\doa.nif*" "%DSTDIR%\Meshes\doa\armor\raiderarmor03\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\raiderarmor04\doa.nif*" "%DSTDIR%\Meshes\doa\armor\raiderarmor04\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\raiderarmor04\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlcpre2\Armor\PreordArmorTribalRaiding\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\republicans\01.nif*" "%DSTDIR%\Meshes\doa\armor\republicans\republicanf_01.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\republicans\02.nif*" "%DSTDIR%\Meshes\doa\armor\republicans\republicanf_02.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\republicans\03.nif*" "%DSTDIR%\Meshes\doa\armor\republicans\republicanf_03.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\republicans\04.nif*" "%DSTDIR%\Meshes\doa\armor\republicans\republicanf_04.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\robcojumpsuit\doa.nif*" "%DSTDIR%\Meshes\doa\armor\robcojumpsuit\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\slaverags\01.nif*" "%DSTDIR%\Meshes\doa\armor\slaverags\slaverags_f1.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\slaverags\02.nif*" "%DSTDIR%\Meshes\doa\armor\slaverags\slaverags_f2.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\tuxedo\doa.nif*" "%DSTDIR%\Meshes\doa\armor\tuxedo\tuxedo_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\vaultsuitutility\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\vaultsuitutility\f\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\vaultsuitutility\f\doadad.nif*" "%DSTDIR%\Meshes\doa\armor\vaultsuitutility\f\vaultsuitutilitydadf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing01\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandclothing01\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing02\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandclothing02\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing03\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandclothing03\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing04\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandclothing04\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing05\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandclothing05\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing06\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandclothing06\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\wastelanddoctor01\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelanddoctor01\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\wastelandsettler01\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandsettler01\f\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\wastelandsettler02\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandsettler02\f\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc01\armor\starlet\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlc01\armor\starlet\nvdlc01starletdress.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\daniel\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\daniel\nvdlc01danieloutfit_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\deadhorse\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\deadhorse\nvdlc02deadhorsestalkingf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\jgraham\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\jgraham\jgraham_outfit_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\sorrows\01.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\sorrows\nvdlc02sorrowsoutfit01_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\sorrows\02.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\sorrows\nvdlc02sorrowsoutfit02_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\sorrows\03.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\sorrows\nvdlc02wakingcloud_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\whitelegs\01.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\whitelegs\whitelegs_vf01.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\whitelegs\02.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\whitelegs\whitelegs_vf02.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc03\armor\nvdlc03patientgown\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlc03\armor\nvdlc03patientgown\nvdlc03patientgown_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc04\armor\markedmen\doa legate.nif*" "%DSTDIR%\Meshes\doa\nvdlc04\armor\markedmen\markedmen_legate_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc04\armor\markedmen\doa lg.nif*" "%DSTDIR%\Meshes\doa\nvdlc04\armor\markedmen\markedmen_lg_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc04\armor\markedmen\doa ncr.nif*" "%DSTDIR%\Meshes\doa\nvdlc04\armor\markedmen\markedmen_ncr_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc04\armor\markedmen\doa ranger.nif*" "%DSTDIR%\Meshes\doa\nvdlc04\armor\markedmen\markedmen_ranger_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc04\armor\ulysses\doa 21.nif*" "%DSTDIR%\Meshes\doa\nvdlc04\armor\ulysses\ulysses_21_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc04\armor\ulysses\doa cl.nif*" "%DSTDIR%\Meshes\doa\nvdlc04\armor\ulysses\ulysses_cl_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc04\armor\ulysses\doa ncr.nif*" "%DSTDIR%\Meshes\doa\nvdlc04\armor\ulysses\ulysses_ncr_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlc04\armor\ulysses\doa oldworld.nif*" "%DSTDIR%\Meshes\doa\nvdlc04\armor\ulysses\ulysses_oldworld_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\nvdlcpre3\armor\preordleather\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlcpre3\armor\preordleather\preordleatherarmorf.nif*" >nul
+
+<nul set /p"=!BS!!CR![=====     ]"
 
 DEL "%DSTDIR%\meshes\characters\_male\daughtersofares\eye\eyelefthumanfemale.nif"
 DEL "%DSTDIR%\meshes\characters\_male\daughtersofares\eye\eyerighthumanfemale.nif"
 @RD /S /Q "%DSTDIR%\textures\characters\daughtersofares\eye"
 MKDIR "%DSTDIR%\textures\characters\daughtersofares\eye"
-XCOPY "%SRCDIR%\textures\characters\daughtersofares\eye\green_g.dds*" "%DSTDIR%\textures\characters\daughtersofares\eye\eye_g.dds*"
-XCOPY "%SRCDIR%\textures\characters\daughtersofares\eye\eye_n.dds*" "%DSTDIR%\textures\characters\daughtersofares\eye\eye_n.dds*"
+XCOPY "%SRCDIR%\textures\characters\daughtersofares\eye\green_g.dds*" "%DSTDIR%\textures\characters\daughtersofares\eye\eye_g.dds*" >nul
+XCOPY "%SRCDIR%\textures\characters\daughtersofares\eye\eye_n.dds*" "%DSTDIR%\textures\characters\daughtersofares\eye\eye_n.dds*" >nul
 
 DEL "%DSTDIR%\textures\characters\daughtersofares\hair\01hair.dds"
 DEL "%DSTDIR%\textures\characters\daughtersofares\hair\01hair_hl.dds"
@@ -180,6 +215,8 @@ DEL "%DSTDIR%\meshes\characters\_male\daughtersofares\hair\rd11.egm"
 DEL "%DSTDIR%\meshes\characters\_male\daughtersofares\hair\hair3a.nif"
 DEL "%DSTDIR%\meshes\characters\_male\daughtersofares\hair\hair3ahat.egm"
 DEL "%DSTDIR%\meshes\characters\_male\daughtersofares\hair\hair3anohat.egm"
+
+<nul set /p"=!BS!!CR![======    ]"
 
 MKDIR "%DSTDIR%\meshes\doa\armor\1950stylecasual01\f\1950scasualvariantfemale"
 MKDIR "%DSTDIR%\meshes\doa\armor\1950stylecasual01\f\1950scasualvariantfemaleold"
@@ -235,38 +272,28 @@ xdelta3.exe -d -s "%DSTDIR%\textures\characters\daughtersofares\eye\green.dds" "
 xdelta3.exe -d -s "%DSTDIR%\textures\characters\daughtersofares\eye\green.dds" "%DLTDIR%\green-white.xd3" "%DSTDIR%\textures\characters\daughtersofares\eye\white.dds"
 xdelta3.exe -d -s "%DSTDIR%\textures\characters\daughtersofares\eye\green.dds" "%DLTDIR%\green-yellow.xd3" "%DSTDIR%\textures\characters\daughtersofares\eye\yellow.dds"
 
-DEL /S /Q %DSTDIR%\*thumbs.db
+<nul set /p"=!BS!!CR![=======   ]"
+
+DEL /S /Q %DSTDIR%\*thumbs.db >nul
+
+<nul set /p"=!BS!!CR![========  ]"
 
 IF %COMPRESS%==1 (
-	BSArch.exe pack "%DSTDIR%\" "%LOCALDIR%DoA-Redux.bsa" -fnv -mt -z
+	BSArch.exe pack "%DSTDIR%\" "%~dp0DoA-Redux.bsa" -fnv -mt -z >nul
 ) ELSE (
-	BSArch.exe pack "%DSTDIR%\" "%LOCALDIR%DoA-Redux.bsa" -fnv -mt
+	BSArch.exe pack "%DSTDIR%\" "%~dp0DoA-Redux.bsa" -fnv -mt >nul
 )
+
+<nul set /p"=!BS!!CR![========= ]"
+
 @RD /S /Q %SRCDIR%
 @RD /S /Q %DSTDIR%
 @RD /S /Q %DLTDIR%
 DEL %DLTZIP%
-GOTO End
 
-:Err1
-ECHO 'xdelta3.exe' is missing!
-ECHO Redux Repack will now exit.
-PAUSE
-EXIT
+<nul set /p"=!BS!!CR![==========]"
 
-:Err2
-ECHO 'BSArch.exe' is missing!
-ECHO Redux Repack will now exit.
-PAUSE
-EXIT
-
-:Err3
-ECHO 'Daughters of Ares.bsa' is missing!
-ECHO Redux Repack will now exit.
-PAUSE
-EXIT
-
-:End
+ECHO.
 ECHO.
 ECHO The operation completed successfully.
 PAUSE
