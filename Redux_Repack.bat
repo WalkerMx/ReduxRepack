@@ -188,6 +188,17 @@ MKDIR "%DSTDIR%\textures\characters\daughtersofares\eye"
 XCOPY "%SRCDIR%\textures\characters\daughtersofares\eye\green_g.dds*" "%DSTDIR%\textures\characters\daughtersofares\eye\eye_g.dds*" >nul
 XCOPY "%SRCDIR%\textures\characters\daughtersofares\eye\eye_n.dds*" "%DSTDIR%\textures\characters\daughtersofares\eye\eye_n.dds*" >nul
 
+XCOPY "%SRCDIR%\textures\characters\daughtersofares\spine\0.dds*" "%DSTDIR%\textures\characters\daughtersofares\spine\1\0.dds*" >nul
+XCOPY "%SRCDIR%\textures\characters\daughtersofares\spine\0.dds*" "%DSTDIR%\textures\characters\daughtersofares\spine\2\0.dds*" >nul
+XCOPY "%SRCDIR%\textures\characters\daughtersofares\spine\0.dds*" "%DSTDIR%\textures\characters\daughtersofares\spine\3\0.dds*" >nul
+XCOPY "%SRCDIR%\textures\characters\daughtersofares\spine\0.dds*" "%DSTDIR%\textures\characters\daughtersofares\spine\4\0.dds*" >nul
+XCOPY "%SRCDIR%\textures\characters\daughtersofares\spine\0.dds*" "%DSTDIR%\textures\characters\daughtersofares\spine\5\0.dds*" >nul
+XCOPY "%SRCDIR%\textures\characters\daughtersofares\spine\0.dds*" "%DSTDIR%\textures\characters\daughtersofares\spine\6\0.dds*" >nul
+XCOPY "%SRCDIR%\textures\characters\daughtersofares\spine\0.dds*" "%DSTDIR%\textures\characters\daughtersofares\spine\7\0.dds*" >nul
+XCOPY "%SRCDIR%\textures\characters\daughtersofares\spine\0.dds*" "%DSTDIR%\textures\characters\daughtersofares\spine\8\0.dds*" >nul
+XCOPY "%SRCDIR%\textures\characters\daughtersofares\spine\0.dds*" "%DSTDIR%\textures\characters\daughtersofares\spine\9\0.dds*" >nul
+XCOPY "%SRCDIR%\textures\characters\daughtersofares\spine\0.dds*" "%DSTDIR%\textures\characters\daughtersofares\spine\10\0.dds*" >nul
+
 DEL "%DSTDIR%\textures\characters\daughtersofares\hair\01hair.dds"
 DEL "%DSTDIR%\textures\characters\daughtersofares\hair\01hair_hl.dds"
 DEL "%DSTDIR%\textures\characters\daughtersofares\hair\01hair_n.dds"
@@ -279,9 +290,9 @@ DEL /S /Q %DSTDIR%\*thumbs.db >nul
 <nul set /p"=!BS!!CR![========  ]"
 
 IF %COMPRESS%==1 (
-	BSArch.exe pack "%DSTDIR%\" "%~dp0DoA-Redux.bsa" -fnv -mt -z >nul
+	BSArch.exe pack "%DSTDIR%\" "%~dp0DoA-Redux.bsa" -fnv -mt -share -z >nul
 ) ELSE (
-	BSArch.exe pack "%DSTDIR%\" "%~dp0DoA-Redux.bsa" -fnv -mt >nul
+	BSArch.exe pack "%DSTDIR%\" "%~dp0DoA-Redux.bsa" -fnv -mt -share >nul
 )
 
 <nul set /p"=!BS!!CR![========= ]"
