@@ -19,50 +19,24 @@ GOTO CheckFiles
 ECHO This program will repack the Daughters of Ares files for you.
 ECHO.
 ECHO Optionally, you can compress these files to save space.
-:Compress
-ECHO Would you like to compress the files? (Y/N)
-SET /P CHOICE=
-
-IF %CHOICE%==Y (
-	SET COMPRESS=1
-) ELSE IF %CHOICE%==y (
-	SET COMPRESS=1
-) ELSE IF %CHOICE%==N (
-	SET COMPRESS=0
-) ELSE IF %CHOICE%==n (
-	SET COMPRESS=0
-) ELSE (
-	ECHO "%CHOICE%" is not a valid choice.
-	GOTO Compress
-)
+ECHO Would you like to compress the files? [Y/N]
+CHOICE /C NY /N
+SET /A COMPRESS=%ERRORLEVEL%-1
 
 ECHO.
-:TaleTW
-ECHO Are you using Tale of Two Wastelands? (Y/N)
-SET /P CHOICE=
-
-IF %CHOICE%==Y (
-	SET TTW=1
-) ELSE IF %CHOICE%==y (
-	SET TTW=1
-) ELSE IF %CHOICE%==N (
-	SET TTW=0
-) ELSE IF %CHOICE%==n (
-	SET TTW=0
-) ELSE (
-	ECHO "%CHOICE%" is not a valid choice.
-	GOTO TaleTW
-)
+ECHO Are you using Tale of Two Wastelands? [Y/N]
+CHOICE /C NY /N
+SET /A TTW=%ERRORLEVEL%-1
 
 SETLOCAL EnableDelayedExpansion
 
-FOR /F %%a in ('COPY /Z "%~dpf0" NUL') DO SET "CR=%%a"
-FOR /F %%a in ('"PROMPT $H&FOR %%b IN (0) DO REM"') DO SET "BS=%%a"
+FOR /F %%a IN ('COPY /Z "%~f0" NUL') DO SET "CR=%%a"
+FOR /F %%a IN ('"PROMPT $H&FOR %%b IN (0) DO REM"') DO SET "BS=%%a"
 
 SET SRCDIR=%TEMP%\DoASource
 SET DSTDIR=%TEMP%\DoAREDUX
 SET DLTDIR=%TEMP%\Delta
-SET DLTZIP=%TEMP%\Delta.zip
+SET DLTZIP=%TEMP%\Delta\Delta.zip
 
 IF NOT EXIST "%SRCDIR%" MKDIR %SRCDIR%
 IF NOT EXIST "%DSTDIR%" MKDIR %DSTDIR%
@@ -80,17 +54,11 @@ CERTUTIL -decode "%~f0" %DLTZIP% >nul
 
 <nul set /p"=!BS!!CR![=         ]"
 
-SET VBS="%TEMP%\Delta.vbs"
+SET VBS="%TEMP%\Delta\Delta.vbs"
 IF EXIST %VBS% DEL /F /Q %VBS%
->%VBS%  ECHO Set fso = CreateObject("Scripting.FileSystemObject")
->>%VBS% ECHO If NOT fso.FolderExists("%DLTDIR%") Then
->>%VBS% ECHO fso.CreateFolder("%DLTDIR%")
->>%VBS% ECHO End If
->>%VBS% ECHO Set objShell = CreateObject("Shell.Application")
+>%VBS% ECHO Set objShell = CreateObject("Shell.Application")
 >>%VBS% ECHO Set FilesInZip=objShell.NameSpace("%DLTZIP%").Items
 >>%VBS% ECHO objShell.NameSpace("%DLTDIR%").CopyHere(FilesInZip)
->>%VBS% ECHO Set fso = Nothing
->>%VBS% ECHO Set objShell = Nothing
 CSCRIPT /nologo %VBS%
 IF EXIST %VBS% DEL /F /Q %VBS%
 
@@ -285,7 +253,7 @@ xdelta3.exe -d -s "%DSTDIR%\textures\characters\daughtersofares\eye\green.dds" "
 
 <nul set /p"=!BS!!CR![=======   ]"
 
-DEL /S /Q %DSTDIR%\*thumbs.db >nul
+DEL /S /Q %DSTDIR%\*thumbs.db >nul 2>nul
 
 <nul set /p"=!BS!!CR![========  ]"
 
@@ -300,7 +268,6 @@ IF %COMPRESS%==1 (
 @RD /S /Q %SRCDIR%
 @RD /S /Q %DSTDIR%
 @RD /S /Q %DLTDIR%
-DEL %DLTZIP%
 
 <nul set /p"=!BS!!CR![==========]"
 
