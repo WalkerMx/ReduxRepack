@@ -2,19 +2,19 @@
 
 :CheckFiles
 
-IF NOT EXIST "%~dp0xdelta3.exe" (SET MISFILE=xdelta3.exe& GOTO Err)
-IF NOT EXIST "%~dp0BSArch.exe" (SET MISFILE=BSArch.exe& GOTO Err)
-IF NOT EXIST "%~dp0Daughters of Ares.bsa" (SET MISFILE=Daughters of Ares.bsa& GOTO Err)
+IF NOT EXIST "%~dp0xdelta3.exe" SET MISFILE=xdelta3.exe
+IF NOT EXIST "%~dp0BSArch.exe" SET MISFILE=BSArch.exe
+IF NOT EXIST "%~dp0Daughters of Ares.bsa" SET MISFILE=Daughters of Ares.bsa
 
-GOTO Start
+IF NOT "%MISFILE%"=="" (
+	ECHO '%MISFILE%' is missing!
+	ECHO Aquire '%MISFILE%', then try again.
+	PAUSE
+	SET "MISFILE="
+	GOTO CheckFiles
+)
 
-:Err
-ECHO '%MISFILE%' is missing!
-ECHO Aquire %MISFILE%, then try again.
-PAUSE
-GOTO CheckFiles
-
-:Start
+CLS
 
 ECHO This program will repack the Daughters of Ares files for you.
 ECHO.
