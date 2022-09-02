@@ -55,12 +55,10 @@ CERTUTIL -decode "%~f0" %DLTZIP% >nul
 <nul set /p"=!BS!!CR![=         ]"
 
 SET VBS="%TEMP%\Delta\Delta.vbs"
-IF EXIST %VBS% DEL /F /Q %VBS%
 >%VBS% ECHO Set objShell = CreateObject("Shell.Application")
 >>%VBS% ECHO Set FilesInZip=objShell.NameSpace("%DLTZIP%").Items
 >>%VBS% ECHO objShell.NameSpace("%DLTDIR%").CopyHere(FilesInZip)
 CSCRIPT /nologo %VBS%
-IF EXIST %VBS% DEL /F /Q %VBS%
 
 <nul set /p"=!BS!!CR![==        ]"
 
@@ -114,7 +112,7 @@ XCOPY "%SRCDIR%\Meshes\armor\robcojumpsuit\doa.nif*" "%DSTDIR%\Meshes\doa\armor\
 XCOPY "%SRCDIR%\Meshes\armor\slaverags\01.nif*" "%DSTDIR%\Meshes\doa\armor\slaverags\slaverags_f1.nif*" >nul
 XCOPY "%SRCDIR%\Meshes\armor\slaverags\02.nif*" "%DSTDIR%\Meshes\doa\armor\slaverags\slaverags_f2.nif*" >nul
 XCOPY "%SRCDIR%\Meshes\armor\tuxedo\doa.nif*" "%DSTDIR%\Meshes\doa\armor\tuxedo\tuxedo_f.nif*" >nul
-XCOPY "%SRCDIR%\Meshes\armor\vaultsuitutility\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\vaultsuitutility\f\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\vaultsuitutility\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\vaultsuitutility\f\outfit.nif*" >nul
 XCOPY "%SRCDIR%\Meshes\armor\vaultsuitutility\f\doadad.nif*" "%DSTDIR%\Meshes\doa\armor\vaultsuitutility\f\vaultsuitutilitydadf.nif*" >nul
 XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing01\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandclothing01\outfitf.nif*" >nul
 XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing02\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandclothing02\outfitf.nif*" >nul
@@ -123,8 +121,8 @@ XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing04\doa.nif*" "%DSTDIR%\Meshes\doa\
 XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing05\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandclothing05\outfitf.nif*" >nul
 XCOPY "%SRCDIR%\Meshes\armor\wastelandclothing06\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandclothing06\outfitf.nif*" >nul
 XCOPY "%SRCDIR%\Meshes\armor\wastelanddoctor01\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelanddoctor01\outfitf.nif*" >nul
-XCOPY "%SRCDIR%\Meshes\armor\wastelandsettler01\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandsettler01\f\outfitf.nif*" >nul
-XCOPY "%SRCDIR%\Meshes\armor\wastelandsettler02\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandsettler02\f\outfitf.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\wastelandsettler01\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandsettler01\f\ouitfit.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\wastelandsettler02\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\wastelandsettler02\f\outfit.nif*" >nul
 XCOPY "%SRCDIR%\Meshes\nvdlc01\armor\starlet\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlc01\armor\starlet\nvdlc01starletdress.nif*" >nul
 XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\daniel\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\daniel\nvdlc01danieloutfit_f.nif*" >nul
 XCOPY "%SRCDIR%\Meshes\nvdlc02\armor\deadhorse\doa.nif*" "%DSTDIR%\Meshes\doa\nvdlc02\armor\deadhorse\nvdlc02deadhorsestalkingf.nif*" >nul
