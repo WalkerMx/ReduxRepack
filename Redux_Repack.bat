@@ -65,9 +65,32 @@ ECHO.
 ECHO Extracting files...
 
 SET VBS="%TEMP%\Delta\DoA.vbs"
->%VBS% ECHO Set objShell = CreateObject("Shell.Application")
->>%VBS% ECHO Set FilesInZip=objShell.NameSpace("%DOAZIP%").Items
->>%VBS% ECHO objShell.NameSpace("%DOADIR%").CopyHere(FilesInZip)
+
+IF %FOMOD%==1 (
+    GOTO ExtractAll
+) ELSE (
+    GOTO ExtractOne
+)
+
+:ExtractAll
+    >%VBS% ECHO Set objShell = CreateObject("Shell.Application")
+    >>%VBS% ECHO Set FilesInZip=objShell.NameSpace("%DOAZIP%").Items
+    >>%VBS% ECHO objShell.NameSpace("%DOADIR%").CopyHere(FilesInZip)
+GOTO DoExtract
+
+:ExtractOne
+    >%VBS% ECHO set objShell=CreateObject("Shell.Application")
+    >>%VBS% ECHO set filesInzip=objShell.NameSpace("%DOAZIP%").items
+    >>%VBS% ECHO For Each zfile In filesInzip
+    >>%VBS% ECHO If zfile = "Core" Then
+    >>%VBS% ECHO objShell.NameSpace("%DOADIR%").CopyHere(zfile)
+    >>%VBS% ECHO Exit For
+    >>%VBS% ECHO End If
+    >>%VBS% ECHO Next
+GOTO DoExtract
+
+:DoExtract
+
 CSCRIPT /nologo %VBS%
 
 MOVE "%DLTDIR%\DOA\Core\Daughters of Ares.bsa" "%~dp0Daughters of Ares.bsa"
