@@ -37,16 +37,18 @@ SETLOCAL EnableDelayedExpansion
 FOR /F %%a IN ('COPY /Z "%~f0" NUL') DO SET "CR=%%a"
 FOR /F %%a IN ('"PROMPT $H&FOR %%b IN (0) DO REM"') DO SET "BS=%%a"
 
-SET SRCDIR=%TEMP%\DoASource
-SET DSTDIR=%TEMP%\DoAREDUX
-SET DLTDIR=%TEMP%\Delta
-SET DOADIR=%TEMP%\Delta\DOA
-SET DLTZIP=%TEMP%\Delta\Delta.zip
+SET SRCDIR=%~dp0Temp\DoASource
+SET DSTDIR=%~dp0Temp\DoAREDUX
+SET DLTDIR=%~dp0Temp\Delta
+SET DOADIR=%~dp0Temp\Delta\DOA
+SET DLTZIP=%~dp0Temp\Delta\Delta.zip
 
-IF NOT EXIST "%SRCDIR%" MKDIR %SRCDIR%
-IF NOT EXIST "%DSTDIR%" MKDIR %DSTDIR%
-IF NOT EXIST "%DLTDIR%" MKDIR %DLTDIR%
-IF NOT EXIST "%DOADIR%" MKDIR %DOADIR%
+IF NOT EXIST "%SRCDIR%" MKDIR "%SRCDIR%"
+IF NOT EXIST "%DSTDIR%" MKDIR "%DSTDIR%"
+IF NOT EXIST "%DLTDIR%" MKDIR "%DLTDIR%"
+IF NOT EXIST "%DOADIR%" MKDIR "%DOADIR%"
+
+ATTRIB +h "%~dp0Temp" /s /d
 
 :ExtractDOA
 
@@ -64,7 +66,7 @@ IF "%DOAZIP%"=="" (
 ECHO.
 ECHO Extracting files...
 
-SET VBS="%TEMP%\Delta\DoA.vbs"
+SET VBS="%~dp0Temp\Delta\DoA.vbs"
 
 IF %FOMOD%==1 (
     GOTO ExtractAll
@@ -103,11 +105,11 @@ ECHO.
 
 <nul set /p"=        [          ]"
 
-CERTUTIL -decode "%~f0" %DLTZIP% >nul
+CERTUTIL -decode "%~f0" "%DLTZIP%" >nul
 
 <nul set /p"=!BS!!CR![=         ]"
 
-SET VBS="%TEMP%\Delta\Delta.vbs"
+SET VBS="%~dp0Temp\Delta\Delta.vbs"
 >%VBS% ECHO Set objShell = CreateObject("Shell.Application")
 >>%VBS% ECHO Set FilesInZip=objShell.NameSpace("%DLTZIP%").Items
 >>%VBS% ECHO objShell.NameSpace("%DLTDIR%").CopyHere(FilesInZip)
@@ -323,6 +325,7 @@ IF NOT %FOMOD%==1 GOTO FEnd
     MKDIR "%~dp0DoA-Redux\Core\"
     MKDIR "%~dp0DoA-Redux\Plugins\"
     MKDIR "%~dp0DoA-Redux\fomod\"
+    ATTRIB +h "%~dp0DoA-Redux" /s /d
     MOVE /Y "%DOADIR%\1024" "%~dp0DoA-Redux\1024" >nul
     MOVE /Y "%DOADIR%\2048" "%~dp0DoA-Redux\2048" >nul
     MOVE /Y "%DOADIR%\Fleshtone Edition" "%~dp0DoA-Redux\Fleshtone Edition" >nul
@@ -334,10 +337,10 @@ IF NOT %FOMOD%==1 GOTO FEnd
     MOVE "%DLTDIR%\info.xml" "%~dp0DoA-Redux\fomod\info.xml" >nul
     MOVE "%DLTDIR%\ModuleConfig.xml" "%~dp0DoA-Redux\fomod\ModuleConfig.xml" >nul
     MOVE "%DLTDIR%\thumb.png" "%~dp0DoA-Redux\fomod\thumb.png" >nul
-	 DEL /S /Q /A:h %~dp0DoA-Redux\*thumbs.db >nul 2>nul
+    DEL /S /Q /A:h %~dp0DoA-Redux\*thumbs.db >nul 2>nul
     SET ZIPFILE="%~dp0DoA-Redux.zip"
     SET ZIPFOLDER="%~dp0DoA-Redux\"
-    SET VBS="%TEMP%\Delta\fomod.vbs"
+    SET VBS="%~dp0Temp\Delta\fomod.vbs"
     >%VBS% ECHO With CreateObject("Scripting.FileSystemObject")
     >>%VBS% ECHO zipFile = .GetAbsolutePathName(%ZIPFILE%)
     >>%VBS% ECHO sFolder = .GetAbsolutePathName(%ZIPFOLDER%)
@@ -358,9 +361,7 @@ IF NOT %FOMOD%==1 GOTO FEnd
 
 DEL "%~dp0Daughters of Ares.bsa"
 
-@RD /S /Q %SRCDIR%
-@RD /S /Q %DSTDIR%
-@RD /S /Q %DLTDIR%
+@RD /S /Q "%~dp0Temp"
 
 <nul set /p"=!BS!!CR![==========]"
 
