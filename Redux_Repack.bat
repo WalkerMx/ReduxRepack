@@ -338,7 +338,7 @@ IF NOT %FOMOD%==1 GOTO EndIf
     IF EXIST "%~dp0DoA-Redux-Optional.esp*" XCOPY "%~dp0DoA-Redux-Optional.esp*" "%~dp0DoA-Redux\Plugins\DoA-Redux-Optional.esp*" >nul
     MOVE "%DLTDIR%\info.xml" "%~dp0DoA-Redux\fomod\info.xml" >nul
     MOVE "%DLTDIR%\ModuleConfig.xml" "%~dp0DoA-Redux\fomod\ModuleConfig.xml" >nul
-    MOVE "%DLTDIR%\thumb.png" "%~dp0DoA-Redux\fomod\thumb.png" >nul
+    MOVE "%DLTDIR%\thumb.jpg" "%~dp0DoA-Redux\fomod\thumb.jpg" >nul
     DEL /S /Q /A:h %~dp0DoA-Redux\*thumbs.db >nul 2>nul
     SET ZIPFILE="%~dp0DoA-Redux.zip"
     SET ZIPFOLDER="%~dp0DoA-Redux\"
