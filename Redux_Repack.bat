@@ -1,6 +1,11 @@
 @ECHO OFF
 
-CD "%~dp0"
+PUSHD "%~dp0"
+
+IF EXIST "%TEMP%\DoASource" @RD /S /Q "%TEMP%\DoASource"
+IF EXIST "%TEMP%\DoAREDUX" @RD /S /Q "%TEMP%\DoAREDUX"
+IF EXIST "%TEMP%\Delta" @RD /S /Q "%TEMP%\Delta"
+IF EXIST "%~dp0Temp" @RD /S /Q "%~dp0Temp"
 
 :CheckFiles
 
@@ -45,10 +50,10 @@ SET DLTDIR=%~dp0Temp\Delta
 SET DOADIR=%~dp0Temp\Delta\DOA
 SET DLTZIP=%~dp0Temp\Delta\Delta.zip
 
-IF NOT EXIST "%SRCDIR%" MKDIR "%SRCDIR%"
-IF NOT EXIST "%DSTDIR%" MKDIR "%DSTDIR%"
-IF NOT EXIST "%DLTDIR%" MKDIR "%DLTDIR%"
-IF NOT EXIST "%DOADIR%" MKDIR "%DOADIR%"
+MKDIR "%SRCDIR%"
+MKDIR "%DSTDIR%"
+MKDIR "%DLTDIR%"
+MKDIR "%DOADIR%"
 
 ATTRIB +h "%~dp0Temp" /s /d
 
