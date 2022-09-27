@@ -139,10 +139,10 @@ XCOPY "%SRCDIR%\Meshes\armor\cass\doa.nif*" "%DSTDIR%\Meshes\doa\armor\cass\cass
 XCOPY "%SRCDIR%\Meshes\armor\centurion\doa.nif*" "%DSTDIR%\Meshes\doa\armor\centurion\centurion_f.nif*" >nul
 XCOPY "%SRCDIR%\Meshes\armor\combatarmor\f\outfitf.doa.nif*" "%DSTDIR%\Meshes\doa\armor\combatarmor\f\outfitf.nif*" >nul
 XCOPY "%SRCDIR%\Meshes\armor\doctorli\f\outfitf.doa.nif*" "%DSTDIR%\Meshes\doa\armor\doctorli\f\outfitf.nif*" >nul
-XCOPY "%SRCDIR%\Meshes\armor\greatkhans\v1.nif*" "%DSTDIR%\Meshes\doa\armor\greatkhans\greatkhan_v1.nif*" >nul
-XCOPY "%SRCDIR%\Meshes\armor\greatkhans\v2.nif*" "%DSTDIR%\Meshes\doa\armor\greatkhans\greatkhan_v2.nif*" >nul
-XCOPY "%SRCDIR%\Meshes\armor\greatkhans\v3.nif*" "%DSTDIR%\Meshes\doa\armor\greatkhans\greatkhan_v3.nif*" >nul
-XCOPY "%SRCDIR%\Meshes\armor\greatkhans\v4.nif*" "%DSTDIR%\Meshes\doa\armor\greatkhans\greatkhan_v4.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\greatkhans\v1.nif*" "%DSTDIR%\Meshes\doa\armor\greatkhans\greatkhan_v1_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\greatkhans\v2.nif*" "%DSTDIR%\Meshes\doa\armor\greatkhans\greatkhan_v2_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\greatkhans\v3.nif*" "%DSTDIR%\Meshes\doa\armor\greatkhans\greatkhan_v3_f.nif*" >nul
+XCOPY "%SRCDIR%\Meshes\armor\greatkhans\v4.nif*" "%DSTDIR%\Meshes\doa\armor\greatkhans\greatkhan_v4_f.nif*" >nul
 XCOPY "%SRCDIR%\Meshes\armor\leatherarmor\f\doa.nif*" "%DSTDIR%\Meshes\doa\armor\leatherarmor\f\outfitf.nif*" >nul
 XCOPY "%SRCDIR%\Meshes\armor\leatherarmor\f\doa ref.nif*" "%DSTDIR%\Meshes\doa\armor\leatherarmor\f\mark2leather_f.nif*" >nul
 XCOPY "%SRCDIR%\Meshes\armor\legion\doa.explorer.nif*" "%DSTDIR%\Meshes\doa\armor\legion\legionexplorer_f.nif*" >nul
