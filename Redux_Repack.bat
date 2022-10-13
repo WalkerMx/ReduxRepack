@@ -128,8 +128,8 @@ BSArch.exe unpack "%~dp0Daughters of Ares.bsa" "%SRCDIR%\" -mt -q >nul
 
 <nul set /p"=!BS!!CR![===       ]"
 
-XCOPY "%SRCDIR%\Meshes\Characters\" "%DSTDIR%\Meshes\Characters\" /E >nul
-XCOPY "%SRCDIR%\Textures\" "%DSTDIR%\Textures\" /E >nul
+XCOPY "%SRCDIR%\Meshes\Characters" "%DSTDIR%\Meshes\Characters" /E /I >nul
+XCOPY "%SRCDIR%\Textures" "%DSTDIR%\Textures" /E /I >nul
 
 <nul set /p"=!BS!!CR![====      ]"
 
